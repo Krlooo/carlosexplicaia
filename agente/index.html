@@ -17,15 +17,49 @@ main{max-width:460px;width:100%}
 h1{font:400 64px/.9 Anton,Impact,sans-serif;margin:14px 0 16px}
 p{font-size:18px;line-height:1.5}
 img{width:100%;border-radius:18px;box-shadow:0 30px 60px -24px rgba(43,5,21,.55);margin:24px 0}
-a.btn{display:block;text-align:center;background:var(--mag);color:#fff;text-decoration:none;font-weight:800;font-size:20px;padding:20px;border-radius:999px;box-shadow:0 18px 36px -16px rgba(232,18,107,.8)}
+input[type=email]{width:100%;font-size:18px;padding:18px 20px;border-radius:999px;border:2px solid #fff;background:#fff4f8;color:var(--gra);margin-bottom:12px;outline:none}
+input[type=email]:focus{border-color:var(--mag)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.ck{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;margin:4px 6px 16px}
+.ck input{width:20px;height:20px;accent-color:var(--mag);flex:none;margin-top:1px}
+.ck a{color:var(--gra)}
+#m{margin-top:14px;font-weight:700;text-align:center;min-height:1.4em}
+.btn{width:100%;border:0;cursor:pointer;display:block;text-align:center;background:var(--mag);color:#fff;text-decoration:none;font-weight:800;font-size:20px;padding:20px;border-radius:999px;box-shadow:0 18px 36px -16px rgba(232,18,107,.8)}
 .f{margin-top:22px;font:500 12px ui-monospace,Menlo,monospace;letter-spacing:.08em;opacity:.65;text-align:center}
 .f a{color:inherit}
 </style></head>
 <body><main>
 <div class="k">Guía gratis · Carlos explica IA</div>
 <h1>TU AGENTE<br>PERSONAL</h1>
-<p>Móntalo en una tarde, en tu ordenador, y háblale desde el móvil. 12 páginas, paso a paso, sin saber programar.</p>
+<p>Móntalo en una tarde, en tu ordenador, y háblale desde el móvil. 12 páginas, paso a paso, sin saber programar. Déjame tu email y te la mando.</p>
 <img src="cover.png" alt="Portada de la guía">
-<a class="btn" href="Tu-agente-personal.pdf" download>Descargar la guía (PDF)</a>
+<form id="f" novalidate>
+  <input name="email" type="email" required placeholder="tu@email.com" autocomplete="email" aria-label="Tu email">
+  <input name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+  <label class="ck"><input type="checkbox" name="consent" value="yes" required>
+  <span>Quiero recibir la guía y los emails de Carlos explica IA, como mucho uno a la semana. Me doy de baja con un clic cuando quiera. <a href="../privacidad/">Privacidad</a></span></label>
+  <button class="btn">Enviarme la guía</button>
+  <p id="m" role="status"></p>
+</form>
 <div class="f">¿Te atascas? Escríbeme en Instagram · <a href="https://www.instagram.com/carlosexplicaia/">@carlosexplicaia</a></div>
-</main></body></html>
+</main>
+<script>
+document.getElementById('f').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = e.target, m = document.getElementById('m'), b = f.querySelector('button');
+  const email = f.email.value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { m.textContent = 'Revisa tu email.'; return; }
+  if (!f.consent.checked) { m.textContent = 'Marca la casilla para que pueda enviártela.'; return; }
+  b.disabled = true; m.textContent = 'Enviando…';
+  try {
+    const r = await fetch('https://lista.krlo.dev/api/subscribe', { method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, consent: 'yes', website: f.website.value, origen: 'reel-agente' }) });
+    const j = await r.json().catch(() => ({}));
+    m.textContent = r.ok ? '¡Listo! Mira tu correo y pulsa «Confirmar». Si no lo ves, revisa spam o promociones.'
+                         : 'No he podido apuntarte. Revisa el email y vuelve a probar.';
+    if (r.ok) f.reset();
+  } catch { m.textContent = 'Sin conexión. Vuelve a probar en un momento.'; }
+  b.disabled = false;
+});
+</script></body></html>
