@@ -11,12 +11,13 @@
 @font-face{font-family:Anton;src:url(Anton-Regular.ttf)}
 :root{--bg:#eeb3c9;--mag:#e8126b;--gra:#2b0515;--wh:#fff4f8}
 *{box-sizing:border-box;margin:0;padding:0}
+html,body{overflow-x:hidden}
 body{background:var(--bg);color:var(--gra);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px}
-main{max-width:460px;width:100%}
+main{max-width:460px;width:100%;min-width:0}
 .k{font:600 12px ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mag)}
 h1{font:400 64px/.9 Anton,Impact,sans-serif;margin:14px 0 16px}
 p{font-size:18px;line-height:1.5}
-img{width:100%;border-radius:18px;box-shadow:0 30px 60px -24px rgba(43,5,21,.55);margin:24px 0}
+img{display:block;width:70%;max-width:300px;margin-left:auto!important;margin-right:auto!important;border-radius:18px;box-shadow:0 30px 60px -24px rgba(43,5,21,.55);margin:24px 0}
 input[type=email]{width:100%;font-size:18px;padding:18px 20px;border-radius:999px;border:2px solid #fff;background:#fff4f8;color:var(--gra);margin-bottom:12px;outline:none}
 input[type=email]:focus{border-color:var(--mag)}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
@@ -32,7 +33,6 @@ input[type=email]:focus{border-color:var(--mag)}
 <div class="k">Guía gratis · Carlos explica IA</div>
 <h1>TU AGENTE<br>PERSONAL</h1>
 <p>Móntalo en una tarde, en tu ordenador, y háblale desde el móvil. 12 páginas, paso a paso, sin saber programar. Déjame tu email y te la mando.</p>
-<img src="cover.png" alt="Portada de la guía">
 <form id="f" novalidate>
   <input name="email" type="email" required placeholder="tu@email.com" autocomplete="email" aria-label="Tu email">
   <input name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
@@ -41,6 +41,8 @@ input[type=email]:focus{border-color:var(--mag)}
   <button class="btn">Enviarme la guía</button>
   <p id="m" role="status"></p>
 </form>
+<img src="cover.png" alt="Portada de la guía">
+
 <div class="f">¿Te atascas? Escríbeme en Instagram · <a href="https://www.instagram.com/carlosexplicaia/">@carlosexplicaia</a></div>
 </main>
 <script>
