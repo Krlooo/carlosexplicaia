@@ -31,7 +31,7 @@ Opened from an Instagram DM or the bio link, inside the in-app browser on a phon
 - Voice: European Spanish, plain, first person, short sentences, no hype words.
 
 ## Evidence on Hand
-The guide itself (12 pages, rendered PDF with cover and page images), the reel "AGENTE", Carlos's real agent (Hermes on WhatsApp). No photographs of Carlos yet.
+The guide itself (14 pages, rendered PDF with cover and page images), the reel "AGENTE", Carlos's real agent (Hermes on WhatsApp). No photographs of Carlos yet.
 
 ## Product Principles
 - One action per page.
