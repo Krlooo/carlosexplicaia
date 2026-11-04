@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Monta un RAG en tu PC · Guía gratis de Carlos explica IA</title>
+<meta name="description" content="Guía gratis de 12 páginas para preguntar a tus propios documentos con una IA que corre en tu ordenador. Sin subir nada a internet y sin saber programar.">
+<meta property="og:title" content="Monta un RAG con tus documentos en tu PC">
+<meta property="og:description" content="Guía gratis de 12 páginas, por @carlosexplicaia.">
+<meta property="og:image" content="https://krlooo.github.io/carlosexplicaia/assets/img/rag/pagina-01.jpg">
+<meta name="theme-color" content="#eeb3c9">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><rect width='10' height='10' fill='%23e8126b'/></svg>">
+<link rel="preload" href="../assets/fonts/Anton-Regular.ttf" as="font" type="font/ttf" crossorigin>
+<style>
+@font-face{font-family:"Anton";src:url(../assets/fonts/Anton-Regular.ttf) format("truetype");font-display:swap}
+@font-face{font-family:"Inter Tight";src:url(../assets/fonts/InterTight.ttf) format("truetype");font-weight:100 900;font-display:swap}
+:root{
+  --ground:#eeb3c9; --paper:#fff4f8; --ink:#2b0515; --ink-soft:#6b2a45; --accent:#e8126b; --action:#c70c59; --field:#2b0515; --hit:#ffd0e2;
+  --m:clamp(16px,2vw,24px); --gap:12px;
+  --t-xl:clamp(46px,5.2vw,84px); --t-l:clamp(38px,4.4vw,66px); --t-m:22px; --t-s:17px; --t-xs:14px;
+  --display:"Anton",Impact,sans-serif; --text:"Inter Tight",system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scrollbar-gutter:stable both-edges;background:var(--ground);color:var(--ink);font:400 var(--t-s)/1.55 var(--text);-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{overflow-x:hidden}
+::selection{background:var(--accent);color:var(--paper)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+a{color:inherit;text-underline-offset:.18em;text-decoration-thickness:.08em}
+img{display:block;max-width:100%;height:auto}
+h1,h2{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:-.005em;line-height:.95;text-wrap:balance}
+h1{font-size:var(--t-xl)}
+h2{font-size:var(--t-l)}
+p{text-wrap:pretty}
+.btn{font:700 var(--t-s)/1 var(--text);background:var(--action);color:var(--paper);border:0;padding:20px 28px;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:10px;transition:transform .25s var(--ease),background .25s var(--ease)}
+.btn:hover{background:#a50a4a}
+.btn:active{transform:scale(.97)}
+.btn[disabled]{opacity:.6;cursor:wait}
+
+/* hero: the guide's cover card beside its pages */
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);padding:var(--m);min-height:100svh}
+.card{background:var(--paper);display:flex;flex-direction:column;min-height:calc(100svh - 2*var(--m))}
+.stripe{display:flex;height:56px;flex:none}
+.stripe i{flex:1;background:var(--accent)}
+.stripe i:nth-child(even){background:var(--paper)}
+.card-body{flex:1;display:flex;flex-direction:column;justify-content:center;padding:clamp(28px,4vw,64px);gap:22px;max-width:640px;margin:0 auto;width:100%}
+.wordmark{font:400 22px/1 var(--display);text-transform:uppercase;letter-spacing:.01em;color:var(--action);text-decoration:none}
+.lead{font-size:var(--t-m);line-height:1.35;max-width:30ch}
+.signup{display:grid;gap:14px;margin-top:6px}
+.signup .row{display:flex;gap:0}
+.signup input[type=email]{flex:1;min-width:0;font:500 var(--t-s)/1 var(--text);color:var(--ink);background:#fff;border:2px solid var(--ink);border-right:0;padding:0 18px;height:62px;border-radius:0}
+.signup input[type=email]::placeholder{color:#8a5a6e}
+.signup input[type=email]:focus{outline:none;border-color:var(--accent)}
+.signup .btn{height:62px;white-space:nowrap}
+.consent{display:flex;gap:12px;align-items:flex-start;font-size:var(--t-xs);line-height:1.45;color:var(--ink-soft);cursor:pointer}
+.consent input{appearance:none;width:22px;height:22px;flex:none;border:2px solid var(--ink);background:#fff;margin-top:1px;display:grid;place-content:center;cursor:pointer}
+.consent input:checked{background:var(--accent);border-color:var(--accent)}
+.consent input:checked::after{content:"";width:10px;height:6px;border:solid var(--paper);border-width:0 0 3px 3px;transform:rotate(-45deg) translate(1px,-1px)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden} /* taste-skill-ignore: honeypot, never visible */
+.status{min-height:1.5em;font-weight:700;font-size:var(--t-s)}
+.status.ok{color:var(--action)}
+.card-links{display:flex;gap:28px;justify-content:center;padding:0 24px 28px;font-size:var(--t-xs);flex-wrap:wrap}
+.card-links a{text-decoration:none;font-weight:600}
+.card-links a:hover{text-decoration:underline}
+.pages{position:sticky;top:var(--m);height:calc(100svh - 2*var(--m));background:var(--ink);overflow:hidden}
+.pages img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:clamp(24px,4vw,64px);opacity:0;transition:opacity 1.6s ease;animation:drift 14s ease-in-out infinite alternate}
+.pages img.on{opacity:1}
+.pages figcaption{position:absolute;left:24px;bottom:20px;color:var(--paper);font-size:var(--t-xs)}
+@keyframes drift{from{transform:scale(1)}to{transform:scale(1.035)}}
+
+/* showcase: questions to your own papers, as slips */
+.showcase{background:var(--field);color:var(--paper);min-height:96svh;position:relative;overflow:hidden;padding:clamp(80px,12vh,140px) var(--m) 0;display:flex;flex-direction:column;justify-content:space-between;gap:56px}
+.showcase .copy{margin-left:18%;max-width:34ch}
+.showcase .copy p{font-size:var(--t-m);line-height:1.35;margin-top:20px}
+.showcase .copy p+p{margin-top:16px;color:#f4c9da}
+.slips{display:flex;gap:var(--gap);align-items:flex-end;margin:0 calc(-1*var(--m));padding:0 var(--m)}
+.slip{flex:1;background:var(--paper);color:var(--ink);padding:20px 18px 0;font-size:var(--t-xs);line-height:1.45;min-width:0}
+.slip:nth-child(1){height:34svh}.slip:nth-child(2){height:42svh;rotate:-1.5deg}.slip:nth-child(3){height:30svh}
+.slip:nth-child(4){height:44svh}.slip:nth-child(5){height:36svh;rotate:1.2deg}.slip:nth-child(6){height:30svh}
+.slip b{display:block;font-size:var(--t-s);margin-bottom:4px}
+.slip .cut{border-top:4px dotted #c98aa4;margin:8px 0 10px}
+.slip .you{color:var(--ink-soft)}
+.slip .ag{margin-top:6px}
+.slip .from{margin-top:6px;font-weight:700;color:var(--action)}
+
+/* live demo: a sample contract cut into pieces, searched by meaning */
+.search{display:grid;grid-template-columns:repeat(12,1fr);gap:24px;padding:clamp(120px,16vh,180px) var(--m) 120px}
+.search .intro{grid-column:1/6}
+.search .intro p{margin-top:20px;max-width:34ch}
+.ask{margin-top:28px;display:grid;gap:10px;font-weight:600;max-width:420px}
+.ask select{font:700 var(--t-s) var(--text);color:var(--ink);background:var(--paper);border:2px solid var(--ink);padding:14px;border-radius:0;cursor:pointer;width:100%}
+.search .note{margin-top:16px;font-size:var(--t-xs);color:var(--ink-soft)}
+.doc{grid-column:7/13;justify-self:end;width:100%;max-width:560px;background:var(--paper);padding:32px 28px 64px;font-variant-numeric:tabular-nums;
+  clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),96% 100%,92% calc(100% - 14px),88% 100%,84% calc(100% - 14px),80% 100%,76% calc(100% - 14px),72% 100%,68% calc(100% - 14px),64% 100%,60% calc(100% - 14px),56% 100%,52% calc(100% - 14px),48% 100%,44% calc(100% - 14px),40% 100%,36% calc(100% - 14px),32% 100%,28% calc(100% - 14px),24% 100%,20% calc(100% - 14px),16% 100%,12% calc(100% - 14px),8% 100%,4% calc(100% - 14px),0 100%)}
+.doc h3{font-size:var(--t-s);font-weight:800;margin-bottom:12px}
+.doc ol{list-style:none;display:grid;gap:6px}
+.doc li{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:baseline;padding:10px 12px;font-size:var(--t-xs);line-height:1.45;transition:background .4s var(--ease),transform .4s var(--ease)}
+.doc li .s{font-weight:700;color:var(--ink-soft)}
+.doc li.hit{background:var(--hit);transform:translateX(-6px)}
+.doc li.hit .s{color:var(--ink)}
+.doc .answer{background:var(--ink);color:var(--paper);padding:16px 14px;margin:22px -10px 0;display:grid;gap:6px}
+.doc .answer strong{font-size:var(--t-s)}
+.doc .answer span{font-size:var(--t-xs);color:#f4c9da}
+
+/* letter */
+.letter-field{background:var(--accent);padding:120px var(--m)}
+.letter{background:var(--paper);max-width:640px;margin:0 auto;padding:60px}
+.letter h2{margin-bottom:28px}
+.letter .who{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.letter .who img{width:56px;height:56px;border-radius:50%}
+.letter p{margin-top:18px}
+.letter mark{background:var(--hit);color:inherit;padding:0 .15em}
+.letter .sign{margin-top:32px;font-size:var(--t-m);font-style:italic;font-weight:600}
+.letter .role{margin-top:0;font-size:var(--t-xs);color:var(--ink-soft)}
+.stub{max-width:640px;margin:0 auto;background:var(--paper);border-top:5px dotted var(--accent);min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 60px;font-weight:700}
+
+/* questions */
+.faq{display:grid;grid-template-columns:repeat(12,1fr);gap:24px;padding:0 var(--m)}
+.faq .col{grid-column:1/6;padding:clamp(120px,16vh,180px) 0}
+.faq .facts{margin:24px 0 36px;font-size:var(--t-s);font-weight:600}
+.faq details{padding:14px 0}
+.faq summary{font-size:var(--t-m);font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:44px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";width:10px;height:10px;border:solid var(--ink);border-width:0 2px 2px 0;transform:rotate(45deg);flex:none;transition:transform .3s var(--ease)}
+.faq details[open] summary::after{transform:rotate(-135deg)}
+.faq details p{margin-top:10px;color:var(--ink-soft);max-width:52ch}
+.faq .actions{margin-top:36px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.faq .pics{grid-column:7/13;position:relative;align-self:center;padding:40px 8% 80px 0}
+.faq .pics img{width:62%;aspect-ratio:759/1075;background:var(--paper)}
+.faq .pics .tall{rotate:-2deg}
+.faq .pics .sq{position:absolute;right:0;top:120px;rotate:3deg}
+
+/* reply card */
+.reply{background:var(--field);color:var(--paper);min-height:80svh;display:grid;grid-template-columns:repeat(12,1fr);gap:24px;padding:120px var(--m) 0;overflow:hidden;align-items:end}
+.from-reel{grid-column:1/5;margin-bottom:64px;display:grid;gap:20px;justify-items:start}
+.from-reel video{width:min(220px,100%);height:auto;aspect-ratio:9/16;background:var(--ink)}
+.from-reel p{font-size:var(--t-m);line-height:1.35;color:#f4c9da;max-width:24ch}
+.rcard{grid-column:6/13;background:var(--paper);color:var(--ink);padding:48px;rotate:2deg;translate:0 60px;text-align:center;max-width:720px;justify-self:end;width:100%}
+.rcard h2{font-size:var(--t-l)}
+.rcard > p{margin:14px auto 24px;max-width:40ch}
+.rcard .signup{text-align:left;max-width:520px;margin:0 auto 60px}
+
+/* footer: back of the card */
+footer{padding:120px var(--m) var(--m)}
+.back{max-width:1100px;margin:0 auto;background:var(--paper);display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:72px 56px 28px;position:relative}
+.back::before{content:"";position:absolute;left:0;right:0;top:-1px;height:24px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='24'%3E%3Cpath d='M24 0a24 24 0 0 0 48 0z' fill='%23eeb3c9'/%3E%3C/svg%3E") 0 0/96px 24px repeat-x}
+.back h2{max-width:14ch}
+.back .msg p{margin-top:14px}
+.back address{font-style:normal;display:grid;gap:12px;font-size:var(--t-s);align-content:start;padding-top:120px}
+.back address a{text-decoration:none;font-weight:600}
+.back address a:hover{text-decoration:underline}
+.stamp{position:absolute;right:56px;top:56px;width:88px;padding:6px;background:var(--ground);rotate:3deg}
+.stamp img{aspect-ratio:3/4;object-fit:cover;width:100%}
+.imprint{grid-column:1/-1;text-align:center;font-size:var(--t-xs);color:var(--ink-soft);margin-top:24px}
+
+/* motion */
+.js .rise{opacity:0;translate:0 24px;transition:opacity .9s var(--ease),translate .9s var(--ease)}
+.js .rise.in{opacity:1;translate:0 0}
+@media (prefers-reduced-motion:reduce){
+  .from-reel video{display:none}
+  .js .rise{opacity:1;translate:0 0;transition:none}
+  .pages img{transition:none;animation:none}
+  .doc li{transition:none}
+  .doc li.hit{transform:none}
+  html{scroll-behavior:auto}
+}
+
+/* phone */
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;gap:0;min-height:auto}
+  .pages{position:relative;top:0;height:30svh;order:-1}
+  .pages figcaption{display:none}
+  .pages img{padding:18px}
+  .card{min-height:auto;margin:-24px 10px 0;position:relative;z-index:1}
+  .stripe{height:40px}
+  .card-body{padding:28px 22px;gap:18px}
+  .lead,.showcase .copy p{font-size:var(--t-s)}
+  .signup .row{flex-direction:column;gap:10px}
+  .signup input[type=email]{border-right:2px solid var(--ink);flex:none;height:62px}
+  .signup .btn{width:100%}
+  .showcase{min-height:100svh;padding-top:72px}
+  .showcase .copy{margin-left:0}
+  .slips{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0;padding:0;align-items:start}
+  .slip{height:auto!important;rotate:none!important;padding:16px 14px 18px}
+  .showcase{padding-bottom:var(--m)}
+  .search,.faq,.reply{grid-template-columns:1fr;gap:32px}
+  .search .intro,.doc,.faq .col,.faq .pics,.from-reel,.rcard{grid-column:1/-1}
+  .search{padding:96px var(--m)}
+  .doc{padding:24px 16px 56px;max-width:none}
+  .doc li.hit{transform:none}
+  .doc .answer{margin:20px -4px 0}
+  .letter-field{padding:96px var(--m)}
+  .letter{padding:28px 24px}
+  .stub{flex-direction:column;align-items:flex-start;justify-content:center;padding:18px 24px;gap:6px}
+  .faq .col{padding:40px 0 0}
+  .faq .pics{order:-1;margin:72px 0 0;padding:16px 4% 40px 0}
+  .faq .pics .sq{top:56px}
+  .faq .actions .btn{width:100%}
+  .reply{padding-top:80px}
+  .from-reel{margin-bottom:0;grid-template-columns:120px 1fr;align-items:center}
+  .from-reel video{width:120px}
+  .rcard{rotate:1deg;translate:0 40px;padding:32px 22px;width:94%;justify-self:center}
+  footer{padding-top:96px}
+  .back{grid-template-columns:1fr;padding:64px 24px 24px;gap:28px}
+  .back::before{background-size:64px 16px;height:16px}
+  .back address{padding-top:0}
+  .stamp{width:64px;right:24px;top:52px}
+  .back .msg{padding-right:76px}
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="hero" aria-labelledby="titulo">
+    <div class="card">
+      <div class="stripe" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="card-body">
+        <a class="wordmark" href="https://www.instagram.com/carlosexplicaia/">Carlos explica IA</a>
+        <h1 id="titulo">Monta un RAG en tu PC</h1>
+        <p class="lead">Una guía gratis de 12 páginas para preguntar a tus propios documentos con una IA que corre en tu ordenador. Sin subir nada a internet y sin saber programar.</p>
+        <form class="signup" novalidate>
+          <div class="row">
+            <input name="email" type="email" required placeholder="tu@email.com" autocomplete="email" aria-label="Tu email">
+            <button class="btn" type="submit">Enviarme la guía</button>
+          </div>
+          <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <label class="consent"><input type="checkbox" name="consent" value="yes"><span>Quiero la guía y los emails de Carlos explica IA, como mucho uno a la semana. Me doy de baja con un clic. <a href="../privacidad/">Privacidad</a></span></label>
+          <p class="status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+      <nav class="card-links" aria-label="En esta página"><a href="#que-trae">Qué trae</a><a href="#asi-busca">Así busca</a><a href="#preguntas">Preguntas</a></nav>
+    </div>
+    <figure class="pages">
+      <img class="on" src="../assets/img/rag/pagina-01.jpg" width="759" height="1075" alt="Portada de la guía: Monta un RAG en tu PC">
+      <img src="../assets/img/rag/pagina-03.jpg" width="759" height="1075" alt="Página 3: cómo funciona un RAG en cuatro pasos" loading="lazy">
+      <img src="../assets/img/rag/pagina-08.jpg" width="759" height="1075" alt="Página 8: dale tus documentos" loading="lazy">
+      <img src="../assets/img/rag/pagina-09.jpg" width="759" height="1075" alt="Página 9: pregunta y mira la fuente" loading="lazy">
+      <figcaption>Páginas reales de la guía</figcaption>
+    </figure>
+  </section>
+
+  <section class="showcase" id="que-trae" aria-labelledby="h-trae">
+    <div class="copy rise">
+      <h2 id="h-trae">Lo que te llevas</h2>
+      <p>Doce páginas pensadas para leer en el móvil: cómo funciona un RAG por dentro, cómo se monta con un programa gratuito y seis trucos para que acierte.</p>
+      <p>Así son las preguntas que podrás hacerle a tus papeles. Las respuestas y los archivos son ejemplos.</p>
+    </div>
+    <div class="slips" aria-label="Ejemplos de preguntas a tus documentos">
+      <article class="slip rise"><b>El piso</b><div class="cut" aria-hidden="true"></div><p class="you">¿Cuánto tiempo tiene el casero para devolverme la fianza?</p><p class="ag">Un mes desde que entregas las llaves.</p><p class="from">contrato-piso.pdf</p></article>
+      <article class="slip rise"><b>El seguro</b><div class="cut" aria-hidden="true"></div><p class="you">¿Me cubre si se rompe la luna del coche?</p><p class="ag">Sí, tienes cobertura de lunas sin franquicia.</p><p class="from">seguro-coche.pdf</p></article>
+      <article class="slip rise"><b>La garantía</b><div class="cut" aria-hidden="true"></div><p class="you">¿Hasta cuándo tengo garantía del lavavajillas?</p><p class="ag">Hasta marzo de 2029, tres años desde la compra.</p><p class="from">factura-lavavajillas.pdf</p></article>
+      <article class="slip rise"><b>El trabajo</b><div class="cut" aria-hidden="true"></div><p class="you">¿Cuántos días de vacaciones me tocan?</p><p class="ag">30 días naturales al año, según tu convenio.</p><p class="from">convenio.pdf</p></article>
+      <article class="slip rise"><b>Tus apuntes</b><div class="cut" aria-hidden="true"></div><p class="you">¿Qué entra en el examen del tema 4?</p><p class="ag">Los apartados 4.1 a 4.3 y los ejercicios del final.</p><p class="from">apuntes-tema4.pdf</p></article>
+      <article class="slip rise"><b>La caldera</b><div class="cut" aria-hidden="true"></div><p class="you">¿Qué significa el error E04?</p><p class="ag">Falta presión de agua. El manual explica cómo rellenarla.</p><p class="from">manual-caldera.pdf</p></article>
+    </div>
+  </section>
+
+  <section class="search" id="asi-busca" aria-labelledby="h-busca">
+    <div class="intro rise">
+      <h2 id="h-busca">Así busca</h2>
+      <p>Esto es un contrato de alquiler de ejemplo, ya cortado en trozos. Elige una pregunta y mira qué trozos encuentra la búsqueda: los tres más parecidos van al prompt. Tu PC hará lo mismo con tus documentos.</p>
+      <label class="ask">Tu pregunta
+        <select id="pregunta">
+          <option value="fianza" selected>¿Cuándo me devuelven la fianza?</option>
+          <option value="perro">¿Puedo tener perro en el piso?</option>
+          <option value="caldera">¿Quién paga si se rompe la caldera?</option>
+        </select>
+      </label>
+      <p class="note">El parecido va de 0 a 1. Estos números son un ejemplo para ver la idea.</p>
+    </div>
+    <div class="doc rise" aria-live="polite">
+      <h3>contrato-piso.pdf, en seis trozos</h3>
+      <ol id="trozos">
+        <li data-k="1" class="hit"><span>La renta mensual es de 750 €, pagadera los cinco primeros días de cada mes.</span><span class="s">0,41</span></li>
+        <li data-k="2" class="hit"><span>El inquilino entrega una mensualidad en concepto de fianza.</span><span class="s">0,74</span></li>
+        <li data-k="3" class="hit"><span>El depósito se devolverá en el plazo de un mes desde la entrega de las llaves.</span><span class="s">0,82</span></li>
+        <li data-k="4"><span>Se permiten animales de compañía avisando antes al propietario.</span><span class="s">0,12</span></li>
+        <li data-k="5"><span>Las reparaciones de la caldera corren a cargo del propietario, salvo mal uso.</span><span class="s">0,18</span></li>
+        <li data-k="6"><span>Las pequeñas reparaciones por el uso diario las paga el inquilino.</span><span class="s">0,22</span></li>
+      </ol>
+      <div class="answer"><strong id="respuesta">Un mes desde que entregas las llaves.</strong><span id="fuente">Fuente: contrato-piso.pdf, trozos 3 y 2</span></div>
+    </div>
+  </section>
+
+  <section class="letter-field" aria-labelledby="h-quien">
+    <article class="letter rise">
+      <h2 id="h-quien">Por qué la he escrito</h2>
+      <div class="who"><img src="../assets/img/carlos-avatar.jpg" width="56" height="56" alt="Logo de Carlos explica IA" loading="lazy"><strong>Carlos</strong></div>
+      <p>Soy programador y doy formación sobre IA. En el reel te conté cómo funciona un RAG por dentro. Esta guía es la parte práctica.</p>
+      <p>La he montado sobre AnythingLLM, un programa gratuito y de código abierto: se instala como cualquier aplicación, no pide cuenta ni tarjeta y, una vez descargados los modelos, tus documentos no salen del ordenador.</p>
+      <p>Mi propio agente usa <mark>este mismo truco para recordar mis notas</mark>: las trocea, las convierte en números y busca las más cercanas antes de contestarme.</p>
+      <p>No necesitas saber programar ni una gráfica cara. Con un ordenador normal y un rato tienes tu primer RAG contestando.</p>
+      <p class="sign">Carlos</p>
+      <p class="role">Carlos explica IA</p>
+    </article>
+    <div class="stub"><span>¿Te atascas en algún paso?</span><a href="https://www.instagram.com/carlosexplicaia/">Escríbeme en Instagram</a></div>
+  </section>
+
+  <section class="faq" id="preguntas" aria-labelledby="h-preg">
+    <div class="col">
+      <h2 id="h-preg" class="rise">Preguntas</h2>
+      <p class="facts rise">Gratis. PDF de 12 páginas. Llega a tu email en un minuto.</p>
+      <details class="rise"><summary>¿Cuesta algo?</summary><p>No. La guía es gratis y el programa que usa, AnythingLLM, también: es de código abierto. El modelo corre en tu ordenador, así que no pagas por pregunta, solo la luz.</p></details>
+      <details class="rise"><summary>¿Mis documentos salen de mi PC?</summary><p>No. Se trocean y se guardan en tu ordenador. El programa solo envía estadísticas de uso anónimas, y la guía te enseña a apagarlas y a dejar el chat en un modo que no busca en internet.</p></details>
+      <details class="rise"><summary>¿Qué ordenador necesito?</summary><p>Windows, Mac o Linux. Sus creadores recomiendan 16 GB de RAM. La tarjeta gráfica es opcional: solo hace que conteste más rápido.</p></details>
+      <details class="rise"><summary>¿Funciona con documentos en español?</summary><p>Sí. El modelo que viene de serie está pensado para inglés, y la guía te dice cuál elegir para que entienda bien el español antes de subir nada.</p></details>
+      <details class="rise"><summary>¿Qué haces con mi email?</summary><p>Te mando la guía y, como mucho una vez a la semana, trucos y vídeos nuevos. No lo vendo ni lo cedo, y te das de baja con un clic. Todo está en la <a href="../privacidad/">política de privacidad</a>.</p></details>
+      <div class="actions rise"><a class="btn" href="#titulo">Quiero la guía</a><a href="https://www.instagram.com/carlosexplicaia/">Ver los vídeos</a></div>
+    </div>
+    <div class="pics rise">
+      <img class="tall" src="../assets/img/rag/pagina-10.jpg" width="759" height="1075" alt="Página 10 de la guía: seis trucos para que acierte" loading="lazy">
+      <img class="sq" src="../assets/img/rag/pagina-11.jpg" width="759" height="1075" alt="Página 11 de la guía: privacidad en cinco reglas" loading="lazy">
+    </div>
+  </section>
+
+  <section class="reply" aria-labelledby="h-pide">
+    <div class="from-reel rise">
+      <video src="../assets/img/rag/reel-rag.mp4" poster="../assets/img/rag/reel-rag.jpg" width="360" height="640" muted loop playsinline autoplay preload="none" aria-label="Fragmento del reel RAG: el mapa de significados"></video>
+      <p>Si vienes del reel, esto es lo que te prometí al comentar RAG.</p>
+    </div>
+    <div class="rcard rise">
+      <h2 id="h-pide">Pídela aquí</h2>
+      <p>Déjame tu email, confírmalo y la tienes en un minuto.</p>
+      <form class="signup" novalidate>
+        <div class="row">
+          <input name="email" type="email" required placeholder="tu@email.com" autocomplete="email" aria-label="Tu email">
+          <button class="btn" type="submit">Enviarme la guía</button>
+        </div>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="yes"><span>Quiero la guía y los emails de Carlos explica IA, como mucho uno a la semana. Me doy de baja con un clic. <a href="../privacidad/">Privacidad</a></span></label>
+        <p class="status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="back">
+    <div class="msg">
+      <h2>Hasta el próximo vídeo</h2>
+      <p>Subo uno nuevo cada día: trucos para tu día a día, noticias y cómo funciona la IA por dentro, sin humo. Y si quieres ir un paso más allá, tienes también la guía <a href="../agente/">Tu agente personal</a>.</p>
+    </div>
+    <address>
+      <a href="https://www.instagram.com/carlosexplicaia/">Instagram · @carlosexplicaia</a>
+      <a href="https://www.tiktok.com/@carlosexplicaia">TikTok · @carlosexplicaia</a>
+      <a href="mailto:privacidad@krlo.dev">privacidad@krlo.dev</a>
+      <a href="../privacidad/">Política de privacidad</a>
+    </address>
+    <div class="stamp" aria-hidden="true"><img src="../assets/img/rag/pagina-01.jpg" width="759" height="1075" alt="" loading="lazy"></div>
+    <p class="imprint">© 2026 Carlos explica IA</p>
+  </div>
+</footer>
+
+<script>
+document.documentElement.classList.add('js');
+const API = 'https://lista.krlo.dev/api/subscribe';
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+document.querySelectorAll('form.signup').forEach((f) => {
+  const m = f.querySelector('.status'), b = f.querySelector('button');
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    m.className = 'status';
+    const email = f.email.value.trim();
+    if (!EMAIL.test(email)) { m.textContent = 'Ese email no parece completo. Revísalo.'; f.email.focus(); return; }
+    if (!f.consent.checked) { m.textContent = 'Marca la casilla para que pueda enviártela.'; f.consent.focus(); return; }
+    b.disabled = true; b.textContent = 'Enviando…';
+    try {
+      const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, consent: 'yes', website: f.website.value, origen: 'reel-rag', guide: 'rag' }) });
+      const d = await r.json().catch(() => ({}));
+      if (r.ok) {
+        m.className = 'status ok';
+        m.textContent = d.sent ? 'Ya estabas en la lista: te la acabo de mandar a tu correo.'
+          : 'Mira tu correo y pulsa «Confirmar». Si no está, busca en spam o promociones.';
+        f.reset();
+      } else m.textContent = 'No he podido apuntarte. Revisa el email y prueba otra vez.';
+    } catch { m.textContent = 'Sin conexión. Prueba otra vez en un momento.'; }
+    b.disabled = false; b.textContent = 'Enviarme la guía';
+  });
+});
+// Live demo: which pieces of the sample contract does each question land next to?
+const DEMO = {
+  fianza: { s: [0.41, 0.74, 0.82, 0.12, 0.18, 0.22], a: 'Un mes desde que entregas las llaves.' },
+  perro: { s: [0.21, 0.19, 0.15, 0.79, 0.14, 0.28], a: 'Sí, avisando antes al propietario.' },
+  caldera: { s: [0.20, 0.16, 0.14, 0.18, 0.81, 0.63], a: 'El propietario, salvo mal uso. Las pequeñas reparaciones del día a día las pagas tú.' },
+};
+const sel = document.getElementById('pregunta');
+const rows = [...document.querySelectorAll('#trozos li')];
+const fmt = (n) => n.toFixed(2).replace('.', ',');
+const show = () => {
+  const d = DEMO[sel.value];
+  const top = d.s.map((v, i) => [v, i]).sort((x, y) => y[0] - x[0]).slice(0, 3).map((x) => x[1]);
+  rows.forEach((li, i) => { li.classList.toggle('hit', top.includes(i)); li.querySelector('.s').textContent = fmt(d.s[i]); });
+  document.getElementById('respuesta').textContent = d.a;
+  const used = top.filter((i) => d.s[i] >= 0.5).map((i) => i + 1);
+  document.getElementById('fuente').textContent = `Fuente: contrato-piso.pdf, trozo${used.length > 1 ? 's' : ''} ${used.join(' y ')}`;
+};
+sel.addEventListener('change', show);
+show();
+const imgs = [...document.querySelectorAll('.pages img')];
+let i = 0, timer;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const next = () => { imgs[i].classList.remove('on'); i = (i + 1) % imgs.length; imgs[i].classList.add('on'); };
+const play = () => { if (!reduce && !timer) timer = setInterval(next, 5500); };
+const stop = () => { clearInterval(timer); timer = null; };
+document.addEventListener('visibilitychange', () => (document.hidden ? stop() : play()));
+play();
+const io = new IntersectionObserver((es) => es.forEach((e) => {
+  if (!e.isIntersecting) return;
+  const sib = [...e.target.parentElement.querySelectorAll(':scope > .rise')];
+  e.target.style.transitionDelay = `${Math.max(0, sib.indexOf(e.target)) * 75}ms`;
+  e.target.classList.add('in'); io.unobserve(e.target);
+}), { threshold: 0.15 });
+document.querySelectorAll('.rise').forEach((el) => io.observe(el));
+</script>
+</body>
+</html>
